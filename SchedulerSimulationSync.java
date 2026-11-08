@@ -193,8 +193,8 @@ try {
     availableProcesses.acquire();
 }
 public void wakeUpAll() {
-    availableProcesses.release(3);
-}
+     availableProcesses.release(SharedStats.totalCPUs);
+    }
     public Process processOf(Thread thread) {
         // TODO Feature 1: protect this access
         queueLock.lock();
