@@ -132,95 +132,119 @@
 
 ## Your Development Log
 
-### Entry 1 - [Date and Time]
-**What I did**:
+### Entry 1 - [November 8, 2026, 1:00 PM]
+**What I did**: Set up my assignment repository and added my student ID.
 
 **Details**:
+- Opened the project in VS Code.
+- Updated my student ID in `SchedulerSimulationSync.java`.
+- Saved my changes using GitHub.
 
-**Challenges**:
+**Challenges**: I needed to understand how to use GitHub commits.
 
-**Solution**:
+**Solution**: I followed the instructions and used Source Control in VS Code.
 
-**Time spent**:
+**Time spent**: Approximately 30 m.
 
 ---
 
-### Entry 2 - [Date and Time]
-**What I did**:
+### Entry 2 - [November 8, 2026, 2:00 PM]
+**What I did**: Added a mutex lock to the shared ready queue (Feature 1).
 
 **Details**:
+- Added a `ReentrantLock` called `queueLock` in `ReadyQueue`.
+- Protected `add()`, `poll()`, `processOf()`, and `snapshot()`.
+- Used `try/finally` to make sure the lock is released.
 
-**Challenges**:
+**Challenges**: I needed to understand which methods access the shared queue.
 
-**Solution**:
+**Solution**: I used the same lock to protect the queue and prevent multiple CPUs from changing it at the same time.
 
-**Time spent**:
+**Time spent**: Approximately 1 hour.
 
 ---
 
-### Entry 3 - [Date and Time]
-**What I did**:
+### Entry 3 - [November 8, 2026, 3:00 PM]
+**What I did**: Added mutex locks to the shared statistics (Feature 2).
 
 **Details**:
+- Added three `ReentrantLock` objects in `SharedStats`.
+- Protected `contextSwitchCount`, `completedProcessCount`, and `totalServiceTime`.
+- Used a separate lock for each counter.
+- Protected both update methods and getters using `try/finally`.
 
-**Challenges**:
+**Challenges**: I needed to decide whether to use one lock or separate locks for the counters.
 
-**Solution**:
+**Solution**: I used separate locks because the three counters are independent and can be accessed without blocking each other unnecessarily.
 
-**Time spent**:
+**Time spent**: Approximately 1 hour.
 
 ---
 
-### Entry 4 - [Date and Time]
-**What I did**:
+### Entry 4 - [November 8, 2026, 4:00 PM]
+**What I did**: Replaced busy waiting with a counting semaphore (Feature 3).
 
 **Details**:
+- Added a `Semaphore` called `availableProcesses` in `ReadyQueue`.
+- Initialized the semaphore to `0`.
+- Used `release()` when adding a process to the queue.
+- Used `acquire()` to make CPUs wait for available processes.
+- Added `wakeUpAll()` to wake up blocked CPUs when all processes finish.
 
-**Challenges**:
+**Challenges**: I needed to understand how to stop CPUs that were blocked on the semaphore.
 
-**Solution**:
+**Solution**: I used `release(SharedStats.totalCPUs)` to wake up the CPUs so they could terminate.
 
-**Time spent**:
+**Time spent**: Approximately 1 hour.
+
 
 ---
 
-### Entry 5 - [Date and Time]
-**What I did**:
+### Entry 5 - [November 8, 2026, 5:00 PM]
+**What I did**: Tested the final version of the scheduler simulation.
 
 **Details**:
+- Ran `SchedulerSimulationSync.java` five consecutive times.
+- Checked all four verification results.
+- Confirmed that context switches were 23 out of 23.
+- Confirmed that 13 processes completed successfully.
+- Verified that total service time was 84822 ms.
+- Confirmed that busy-waiting polls were 0.
+- All five runs completed successfully without errors.
 
-**Challenges**:
+**Challenges**: I needed to make sure the synchronization worked correctly in every run.
 
-**Solution**:
+**Solution**: I repeated the simulation five times and checked the verification results after each run.
 
-**Time spent**:
+**Time spent**: Approximately 30 minutes.
 
 ---
 
-### Entry 6 - [Optional - Date and Time]
-**What I did**:
+###  Entry 6 - [November 8, 2026, actual time]
+**What I did**: Updated the assignment documentation in `MY_WORK.md`.
 
 **Details**:
+- Added my student information.
+- Documented the changes made to Features 1, 2, and 3.
+- Recorded the results of the five successful test runs.
+- Reviewed the documentation requirements.
 
-**Challenges**:
+**Challenges**: I needed to organize my work clearly and follow the required format.
 
-**Solution**:
+**Solution**: I used the provided template to document each feature and its testing results.
 
-**Time spent**:
-
+**Time spent**: [40 m ]
 ---
 
-## Development Log Summary
+## ## Development Log Summary
 
-> 💡 **TIP:** Fill this in **last**, after all entries are written.
+**Total time spent on assignment**: Approximately 5.5 hours
 
-**Total time spent on assignment**: [X hours]
+**Most challenging part**: Understanding how to use the semaphore to stop all CPU threads correctly.
 
-**Most challenging part**:
+**Most interesting learning**: I learned how mutex locks prevent race conditions and how semaphores allow threads to wait without busy waiting.
 
-**Most interesting learning**:
-
-**What I would do differently next time**:
+**What I would do differently next time**: I would test each feature separately and document my progress after every work session.
 
 ---
 
