@@ -264,7 +264,7 @@
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[I learned that synchronization is important when multiple threads access shared data. Without synchronization, race conditions can happen and produce incorrect results. In this assignment, I used `ReentrantLock` to protect the shared ready queue and statistics. I learned that `try/finally` ensures the lock is released after accessing a critical section. I also used a counting semaphore to make CPUs wait instead of repeatedly checking an empty queue. After these changes, my program passed all four verification checks in five consecutive runs.]
 
 ## Question 2: What was the most challenging part of this assignment?
 
@@ -272,7 +272,7 @@
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[The most challenging part of this assignment was implementing the counting semaphore in Feature 3. At first, I found it difficult to understand how the CPU threads should wait when the ready queue is empty. I also needed to make sure that all CPUs could stop correctly after completing the processes. I learned that forgetting to wake up blocked threads could cause the program to hang. I used `release(SharedStats.totalCPUs)` to handle the shutdown. After testing the program five times, all verification results were correct.]
 
 ## Question 3: How did you overcome the challenges you faced?
 
@@ -280,7 +280,7 @@
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[I overcame the challenges by reading the assignment instructions and reviewing the synchronization concepts. I checked the methods in `ReadyQueue` and `SharedStats` to understand how the threads share data. I made changes to the code one feature at a time. I used `ReentrantLock` to protect critical sections and `Semaphore` to replace busy waiting. After completing the changes, I ran the program five times to check the results. All four verification checks passed in every run, which helped me confirm that my solution worked.]
 
 ## Question 4: Where can synchronization concepts be applied in real-world applications?
 
@@ -288,19 +288,19 @@
 
 **Your Answer:** *(5-7 sentences)*
 
-[Write your answer here.]
+[Synchronization can be used in many real-world applications. For example, banking systems need synchronization when multiple users access the same account. It prevents incorrect updates when two transactions happen at the same time. Ticket booking systems also use synchronization to prevent two customers from booking the same seat. Mutex locks can protect shared data, while semaphores can control access to available resources. These concepts help systems work correctly when multiple threads run concurrently.]
 
 ### Optional: What would you like to learn more about?
 
-[Any topics related to synchronization or operating systems that you're curious about?]
+I would like to learn more about deadlocks and how to prevent them.
 
 ### Optional: How confident do you feel about synchronization concepts now?
 
-[Beginner / Intermediate / Confident. What do you understand well? What needs more practice?]
+Intermediate. I understand mutex locks and semaphores better now, but I still need more practice.
 
 ### Optional: Feedback on the assignment
 
-[Any comments? Was it helpful? Too easy or hard? Suggestions?]
+The assignment helped me understand synchronization through practical coding and testing.
 
 ---
 
