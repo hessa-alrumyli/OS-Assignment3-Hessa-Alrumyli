@@ -322,20 +322,28 @@ The assignment helped me understand synchronization through practical coding and
 
 **Your Answer:** *(3-5 sentences)*
 
-[Write your answer here.]
+In my original starter run, the context switches were expected to be 23 but the observed value was 21, the completed processes were expected to be 13 but the observed value was 12, and the total service time was 75159 ms instead of 84822 ms. One lost update can happen when CPU-1 reads contextSwitchCount = 10, then CPU-2 also reads 10, and both write 11, so one increment is lost. The program also produced 2189 busy-waiting polls and triggered the watchdog because the simulation did not finish correctly. The same race condition can happen on a real machine without RaceWindow.pause() because a context switch can occur between reading and writing the shared value.
 
-Verification block of the **original starter**:
-```
-[Paste the verification block (or the exception/watchdog message) of the starter here]
-```
+Verification block of the original starter:
 
-Verification block of **my final version**:
-```
-[Paste the verification block of your final version here (all lines ✔)]
-```
+Context switches (quanta executed)   expected 23      observed 21      MISMATCH
+Completed processes                  expected 13      observed 12      MISMATCH
+Total service time (ms)              expected 84822   observed 75159   MISMATCH
+Busy-waiting polls (must be 0)       expected 0       observed 2189    MISMATCH
+WATCHDOG: the simulation did not finish (31 s).
 
-**Explanation of the timeline:**
-[Explain the lost update step by step.]
+Verification block of my final version:
+
+Context switches (quanta executed)   expected 23      observed 23      ✔
+Completed processes                  expected 13      observed 13      ✔
+Total service time (ms)              expected 84822   observed 84822   ✔
+Busy-waiting polls (must be 0)       expected 0       observed 0       ✔
+✔ All shared values are consistent.
+
+Explanation of the timeline:
+
+CPU-1 reads contextSwitchCount = 10. Before CPU-1 writes the new value, CPU-2 also reads 10. CPU-1 writes 11, then CPU-2 also writes 11. The expected value should be 12, but the final value is 11, so one update is lost.
+
 
 ## Question 2: Critical Sections and Lock Granularity
 
@@ -345,13 +353,16 @@ Verification block of **my final version**:
 
 **Your Answer:** *(3-5 sentences)*
 
-[Write your answer here.]
+I protected the ready queue operations with queueLock, including add(), poll(), processOf(), and snapshot(), because multiple CPUs can access the shared list and map at the same time. For the three shared statistics, I used three separate locks: contextSwitchLock, completedProcessLock, and serviceTimeLock, because the counters are independent and do not need to block each other. The ready queue uses a different lock from the statistics so a CPU can update a statistic without waiting for another CPU that is accessing the queue. The locks provide mutual exclusion and progress, but bounded waiting is not strictly guaranteed because the default ReentrantLock is nonfair.
 
-| Critical section (variable / method) | Lock used | Why it needs protection |
-|---|---|---|
-| [e.g., `ReadyQueue.poll()`] | [lock name] | [reason] |
-| [...] | [...] | [...] |
-
+Critical section (variable / method)	Lock used	Why it needs protection
+ReadyQueue.add()	queueLock	Modifies the shared list and map
+ReadyQueue.poll()	queueLock	Removes an item from the shared queue
+ReadyQueue.processOf()	queueLock	Reads the shared map
+ReadyQueue.snapshot()	queueLock	Reads the shared list and map
+contextSwitchCount	contextSwitchLock	Prevents lost updates to the counter
+completedProcessCount	completedProcessLock	Prevents lost updates to the counter
+totalServiceTime	serviceTimeLock	Prevents lost updates to the shared total
 ## Question 3: Busy Waiting vs Semaphore
 
 **Question**: Describe the **busy waiting** of the starter and its cost (give the `Busy-waiting polls` number from your **starter** run). What does the **value of your semaphore** represent? What is its **initial value** and why? What is its value right after the `numProcesses` initial `add()` calls? Why does the last CPU call `release(totalCPUs)` at the end, and what would happen if it did not?
@@ -360,7 +371,9 @@ Verification block of **my final version**:
 
 **Your Answer:** *(3-5 sentences)*
 
-[Write your answer here.]
+[Your Answer: (3-5 sentences)
+
+In the starter code, when the ready queue was empty, each CPU repeatedly called poll(), slept for 20 ms, and tried again, which caused busy waiting; in my starter run there were 2189 busy-waiting polls. In my final version, the semaphore represents the number of processes available in the ready queue, and its initial value is 0 because the queue starts empty. After the 13 initial add() calls, its value becomes 13 because every added process releases one permit, and a CPU that finds no available permit blocks in acquire() instead of polling. When the last process finishes, release(SharedStats.totalCPUs) wakes the CPUs that may still be blocked; without this release, those CPU threads could remain blocked forever and the program would not terminate.]
 
 ## Question 4: Classical Problems and Deadlock
 
@@ -370,25 +383,33 @@ Verification block of **my final version**:
 
 **Your Answer:** *(3-5 sentences)*
 
-**Classical problem and roles**:
-[Name the problem; who is the producer, who is the consumer?]
+This is the Producer-Consumer bounded-buffer problem. The CPUs act as both consumers when they remove processes from the ready queue and producers when they re-enqueue unfinished processes. If the ready queue had capacity K, the semaphores would be empty = K, full = 0, and mutex = 1. A deadlock could happen if a thread acquires mutex first and then waits on empty or full, because another thread that needs the mutex cannot change the queue state. To prevent this, the thread should wait on empty or full before acquiring mutex, which breaks the hold-and-wait condition.
 
-**Semaphores for a bounded queue (name and initial value)**:
-[Name the three semaphores and their initial values.]
+Classical problem and roles:
 
-**Deadlock scenario and prevention**:
-[Describe the scenario and the necessary condition you would break.]
+Producer-Consumer bounded-buffer problem. The CPUs are consumers when they remove processes from the ready queue, and producers when they re-enqueue unfinished processes.
+
+Semaphores for a bounded queue (name and initial value):
+
+empty = K
+full = 0
+mutex = 1
+
+Deadlock scenario and prevention:
+
+If a producer acquires mutex first and then waits on empty while the queue is full, it keeps holding the mutex. A consumer cannot acquire the mutex to remove a process and create an empty slot, so both threads remain blocked. This deadlock is prevented by waiting on empty or full before acquiring mutex, which breaks the hold-and-wait condition.
 
 ## Summary
 
-**Key concepts I understood through these questions:**
-1.
-2.
-3.
+Key concepts I understood through these questions:
 
-**Concepts I need to study more:**
-1.
-2.
+1. Race conditions and lost updates.
+2. Critical sections and using ReentrantLock.
+3. Semaphores, busy waiting, and deadlock prevention.
+
+Concepts I need to study more:
+
+I need more practice with deadlock scenarios and choosing the correct synchronization order.
 
 ---
 
